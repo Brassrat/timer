@@ -61,13 +61,13 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
 const buttons = function(){
   // TODO load from config file??
   return {
-    red: Button('red', 'red', 5, 'clap', 1),
-    orange: Button('orange', 'orange', 5, 'chimes', 1),
+    red: Button('red', 'red', 5, 'CLAP', 1),
+    orange: Button('orange', 'orange', 5, 'CHIMES', 1),
     yellow: Button('yellow', 'yellow', 5, 'moo', 1),
     green: Button('green', 'green', 10, 'beep', 5),
-    blue: Button('blue', 'blue', 10, 'drumroll', 1)
+    blue: Button('blue', 'blue', 10, 'DRUMROLL', 1)
     //indigo: Button('indigo', 'indigo', 5, 'drop', 5)
-    //violet: Button('violet', 'violet', 5, 'beep', 5)
+    //violet: Button('violet', 'violet', 5, 'GLASS', 5)
   }
 }();
 
