@@ -2,67 +2,58 @@
 var timerBackground = 'black';
 
 function Button(aId, aColor, aDuration, aSound, aRepeat) {
-  var id = aId;
-  var color = aColor;
-  var duration = aDuration;
-  var sound = aSound;
-  var audio;
-  var repeat = aRepeat || 1;
-  var element;
+  var _id = aId;
+  var _color = aColor;
+  var _duration = aDuration;
+  var _sound = aSound;
+  var _played = false;
+  var _audio;
+  var _repeat = aRepeat || 1;
+  var _element;
   return {
     id: function () {
-      return id
+      return _id
     },
     element: function () {
-      return element
+      return _element
     },
-    setElement: function (elem) {
-      element = elem;
+    setElement: function () {
+      element = document.getElementById(_id);
       return element;
     },
-    audio: function () {
-      if (sound && !audio) {
-        audio = new Audio('sound/' + sound + '.wav');
+    play: function(count) {
+      if (_sound && !_audio) {
+        _audio = new Audio('sound/' + _sound + '.wav');
       }
-      return audio;
+      if (_audio) {
+        var ct = count || 1;
+        if (ct > 1) {
+          _audio.addEventListener("ended",
+            function ended() {
+              if (--ct > 0) {
+                _audio.play();
+              } else {
+                _audio.removeEventListener("ended", ended, false);
+              }
+            }, true);
+        }
+        _played = true;
+        _audio.play();
+      }
+    },
+    playOnce: function() {
+      if (!_played) {
+        this.play(1);
+      }
     },
     color: function () {
-      return color
+      return _color
     },
     duration: function () {
-      return duration
-    },
-    sound: function () {
-      return sound;
+      return _duration
     },
     repeat: function () {
-      return repeat
-    }
-  }
-}
-
-function playOnce(audio) {
-    if (audio) { audio.play(); }
-}
-
-function playTone(button) {
-  if (button) {
-    if (button.audio()) {
-      var ct = button.repeat();
-      if (ct > 1) {
-        button.audio().addEventListener("ended",
-          function ended() {
-            if (--ct > 0) {
-              button.audio().play();
-            } else {
-              button.audio().removeEventListener("ended", ended, false);
-            }
-          }, true);
-      }
-      button.audio().play();
-    }
-    else {
-      alert("NO SOUND for " + button.id());
+      return _repeat
     }
   }
 }
@@ -158,6 +149,8 @@ function unColorBars() {
   }
 }
 
+var activeButton;
+
 function updateClock() {
   var t = getTimeRemaining(endtime);
   updateDigits(daysDiv, dayText, t.days, '');
@@ -170,12 +163,11 @@ function updateClock() {
     }
   }
   if (t.total <= 0) {
-    stopTimer();
+    stopTimer(activeButton);
   }
   return t;
 }
 
-var activeButton;
 
 function disableButtons(state) {
   for (var ii = 0; ii < buttons.length; ++ii) {
@@ -195,9 +187,9 @@ function disableDigits() {
   disableDigit(secondText);
 }
 
-function stopTimer() {
+function stopTimer(btn) {
   clearInterval(timeinterval);
-  playTone(activeButton);
+  if (btn) { btn.play(btn.repeat); }
   disableButtons(false);
   disableDigits();
   document.getElementById('barRow').style.visibility="hidden";
@@ -218,12 +210,12 @@ function colorDigits(btn) {
   colorDigit(secondText, cc);
 }
 
-var startSound = new Audio('sound/' + 'beep' + '.wav');
+//var startSound = new Audio('sound/' + 'beep' + '.wav');
 
 function startCountDown(id) {
   activeButton = buttons[id];
   if (activeButton) {
-    playOnce(startSound);
+    activeButton.playOnce();
     disableButtons(true);
     endtime = Date.now() + (activeButton.duration() * 1000);
     colorDigits(activeButton);
