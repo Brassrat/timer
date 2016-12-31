@@ -43,6 +43,8 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
     },
     playOnce: function() {
       if (!_played) {
+        var audio = new Audio('sound/' + 'clap' + '.wav');
+        audio.play();
         this.play(1);
       }
     },
@@ -61,11 +63,11 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
 const buttons = function(){
   // TODO load from config file??
   return {
-    red: Button('red', 'red', 5, 'CLAP', 1),
-    orange: Button('orange', 'orange', 5, 'CHIMES', 1),
+    red: Button('red', 'red', 5, 'clap', 1),
+    orange: Button('orange', 'orange', 5, 'chimes', 1),
     yellow: Button('yellow', 'yellow', 5, 'moo', 1),
-    green: Button('green', 'green', 10, 'beep', 5),
-    blue: Button('blue', 'blue', 10, 'DRUMROLL', 1)
+    green: Button('green', 'green', 10, 'beep', 4),
+    blue: Button('blue', 'blue', 10, 'drumroll', 1)
     //indigo: Button('indigo', 'indigo', 5, 'drop', 5)
     //violet: Button('violet', 'violet', 5, 'GLASS', 5)
   }
@@ -218,8 +220,6 @@ function startCountDown(id) {
   activeButton = buttons[id];
   if (activeButton) {
     disableButtons(true);
-    var audio = new Audio('sound/' + 'beep' + '.wav');
-    audio.play();
     activeButton.playOnce();
     endtime = Date.now() + (activeButton.duration() * 1000);
     colorDigits(activeButton);
