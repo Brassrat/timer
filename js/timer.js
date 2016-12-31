@@ -41,6 +41,10 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
   }
 }
 
+function playOnce(audio) {
+    if (audio) { audio.play(); }
+}
+
 function playTone(button) {
   if (button) {
     if (button.audio()) {
@@ -214,13 +218,18 @@ function colorDigits(btn) {
   colorDigit(secondText, cc);
 }
 
+var startSound = new Audio('sound/' + 'beep' + '.wav');
+
 function startCountDown(id) {
-  disableButtons(true);
   activeButton = buttons[id];
-  endtime = Date.now() + (activeButton.duration() * 1000);
-  colorDigits(activeButton);
-  colorBars(activeButton, updateClock());
-  timeinterval = setInterval(updateClock, 1000);
+  if (activeButton) {
+    playOnce(startSound);
+    disableButtons(true);
+    endtime = Date.now() + (activeButton.duration() * 1000);
+    colorDigits(activeButton);
+    colorBars(activeButton, updateClock());
+    timeinterval = setInterval(updateClock, 1000);
+  }
 }
 
 window.onload = function () {
@@ -243,3 +252,5 @@ window.onload = function () {
   disableDigits();
   unColorBars();
 };
+
+// vim: sw: 2 ts: 2 :
