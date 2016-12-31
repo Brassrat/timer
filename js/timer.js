@@ -8,8 +8,8 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
   var _sound = aSound;
   var _played = false;
   var _audio;
-  var _repeat = aRepeat || 1;
   var _element;
+  var _repeat = aRepeat || 1;
   return {
     id: function () {
       return _id
@@ -18,8 +18,8 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
       return _element
     },
     setElement: function () {
-      element = document.getElementById(_id);
-      return element;
+      _element = document.getElementById(_id);
+      return _element;
     },
     play: function(count) {
       if (_sound && !_audio) {
@@ -168,10 +168,12 @@ function updateClock() {
   return t;
 }
 
-
 function disableButtons(state) {
-  for (var ii = 0; ii < buttons.length; ++ii) {
-    buttons[ii].element().disabled = state;
+  for (var key in buttons) {
+    if (buttons.hasOwnProperty(key)) {
+      var elem = buttons[key].element();
+      if (elem) { elem.disabled = state; }
+    }
   }
 }
 
@@ -189,7 +191,7 @@ function disableDigits() {
 
 function stopTimer(btn) {
   clearInterval(timeinterval);
-  if (btn) { btn.play(btn.repeat); }
+  if (btn) { btn.play(btn.repeat()); }
   disableButtons(false);
   disableDigits();
   document.getElementById('barRow').style.visibility="hidden";
@@ -215,8 +217,8 @@ function colorDigits(btn) {
 function startCountDown(id) {
   activeButton = buttons[id];
   if (activeButton) {
-    activeButton.playOnce();
     disableButtons(true);
+    activeButton.playOnce();
     endtime = Date.now() + (activeButton.duration() * 1000);
     colorDigits(activeButton);
     colorBars(activeButton, updateClock());
@@ -232,15 +234,14 @@ window.onload = function () {
   for (var key in buttons) {
     if (buttons.hasOwnProperty(key)) {
       var button = buttons[key];
-      var elem = button.setElement(document.getElementById(button.id()));
+      var elem = button.setElement();
       if (elem) {
-        var dd = button.duration();
-        elem.innerHTML = '' + dd;
+        elem.innerHTML = '' + button.duration();
         elem.style.backgroundColor = button.color();
-        elem.disabled = false;
       }
     }
   }
+  disableButtons(false);
   disableDigits();
   unColorBars();
 };
