@@ -43,8 +43,7 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
     },
     playOnce: function() {
       if (!_played) {
-        var audio = new Audio('sound/' + 'clap' + '.wav');
-        audio.play();
+        //(new Audio('sound/' + 'clap' + '.wav')).play();
         this.play(1);
       }
     },
