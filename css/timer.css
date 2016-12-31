@@ -69,6 +69,7 @@
 
 .start, .pause, .resume, .close {
     width: 80px;
+    padding: 0px;
     font-size: 35pt;
     font-family: Verdana;
     text-align: center;
