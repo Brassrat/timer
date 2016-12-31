@@ -10,3 +10,6 @@ Simple countdown timer for small people
       - green: 10 seconds
       - blue: 10 seconds
 
+* Todo:
+   - config file
+
