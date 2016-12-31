@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" manifest="cache.manifest">
+<head>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="viewport" content="user-scalable=no, width=device-width"/>
+  <link rel="apple-touch-icon" href="./timer.ico" />
+  <title>Countdown Timer</title>
+  <link REL="StyleSheet" TYPE="text/css" HREF="css/timer.css">
+  <script type="text/javascript" src="js/timer.js"></script>
+  <script>
+    function BlockMove(event) {
+      // Tell Safari not to move the window.
+      event.preventDefault();
+    }
+  </script>
+<body ontouchmove="BlockMove(event);">
+
+<table id="timer" class="timer">
+  <tr>
+    <td>
+      <div id="stuff" class="name"></div>
+    </td>
+  </tr>
+
+  <tr id="barRow">
+    <td>
+      <span id="bar10" class="bar">-</span>
+      <span id="bar9" class="bar">-</span>
+      <span id="bar8" class="bar">-</span>
+      <span id="bar7" class="bar">-</span>
+      <span id="bar6" class="bar">-</span>
+      <span id="bar5" class="bar">-</span>
+      <span id="bar4" class="bar">-</span>
+      <span id="bar3" class="bar">-</span>
+      <span id="bar2" class="bar">-</span>
+      <span id="bar1" class="bar">-</span>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div id="hourDiv" class="hidden"><span id="hour">:</span></div>
+      <div id="minuteDiv" class="hidden"><span id="minute">:</span></div>
+      <div id="secondDiv" class="digits"><span id="second"></span></div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <button id="red" class="start" disabled="disabled" onclick="startCountDown('red');">0</button>
+      <button id="orange" class="start" disabled="disabled" onclick="startCountDown('orange');">0</button>
+      <button id="yellow" class="start" disabled="disabled" onclick="startCountDown('yellow');">0</button>
+      <button id="green" class="start" disabled="disabled" onclick="startCountDown('green');">0</button>
+      <button id="blue" class="start" disabled="disabled" onclick="startCountDown('blue');">0</button>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

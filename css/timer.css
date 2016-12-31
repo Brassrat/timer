@@ -1,0 +1,74 @@
+
+.timer {
+    visibility: hidden;
+    text-align: center;
+    background: black;
+    font-family: Arial;
+    font-weight: bold;
+    border: 2px outset;
+    border-left: 2px outset darkgray;
+    border-top: 2px outset darkgray;
+}
+
+.timer_pad {
+    padding: 10px;
+}
+
+.name {
+    margin-top: 15px;
+    color: yellow;
+    font-size: 40pt;
+    font-family: Verdana;
+}
+
+.hidden {
+   display: none;
+   visibility: hidden;
+}
+
+.bar {
+    margin-top: 15px;
+    color: black;
+    font-size: 40pt;
+    font-family: Verdana;
+    text-align: left;
+}
+
+.digits {
+    margin-top: 15px;
+    color: chartreuse;
+    font-size: 40pt;
+    font-family: Verdana;
+}
+
+.title {
+    color: white
+}
+
+.hours, .minutes, .seconds {
+    margin-left: 3px;
+}
+
+.hours, .minutes {
+    margin-right: 5px;
+}
+
+.field_cont {
+    margin-top: 15px;
+}
+
+.field {
+    color: yellow;
+}
+
+.btn_cont {
+    margin-top: 20px;
+}
+
+.start, .pause, .resume .close {
+    margin-right: 5px;
+    width: 80px;
+    font-size: 40pt;
+    font-family: Verdana;
+    text-align: center;
+}
