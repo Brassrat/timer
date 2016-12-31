@@ -1,12 +1,13 @@
 
 var timerBackground = 'black';
+var is_safari = navigator.userAgent.indexOf("Safari") > -1;
 
 function Button(aId, aColor, aDuration, aSound, aRepeat) {
   var _id = aId;
   var _color = aColor;
   var _duration = aDuration;
   var _sound = aSound;
-  var _played = false;
+  var _played = !is_safari;
   var _audio;
   var _element;
   var _repeat = aRepeat || 1;
