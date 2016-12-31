@@ -1,17 +1,32 @@
 
 .timer {
+    xvisibility: hidden;
+    xtext-align: center;
+    background: black;
+    xfont-family: Arial;
+    xfont-weight: bold;
+    xborder: 2px outset;
+    xborder-left: 2px outset darkgray;
+    xborder-top: 2px outset darkgray;
+}
+
+.timer table {
     visibility: hidden;
-    text-align: center;
     background: black;
     font-family: Arial;
     font-weight: bold;
     border: 2px outset;
-    border-left: 2px outset darkgray;
-    border-top: 2px outset darkgray;
+    xborder-left: 2px outset darkgray;
+    xborder-top: 2px outset darkgray;
+    text-align: center;
 }
 
-.timer_pad {
-    padding: 10px;
+.timer tr {
+    text-align: center;
+}
+
+.timer tr td {
+    text-align: center;
 }
 
 .name {
@@ -31,7 +46,7 @@
     color: black;
     font-size: 40pt;
     font-family: Verdana;
-    text-align: left;
+    xtext-align: left;
 }
 
 .digits {
