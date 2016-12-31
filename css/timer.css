@@ -46,7 +46,6 @@
     color: black;
     font-size: 40pt;
     font-family: Verdana;
-    xtext-align: left;
 }
 
 .digits {
@@ -54,10 +53,6 @@
     color: chartreuse;
     font-size: 40pt;
     font-family: Verdana;
-}
-
-.title {
-    color: white
 }
 
 .hours, .minutes, .seconds {
@@ -68,16 +63,8 @@
     margin-right: 5px;
 }
 
-.field_cont {
-    margin-top: 15px;
-}
-
 .field {
     color: yellow;
-}
-
-.btn_cont {
-    margin-top: 20px;
 }
 
 .start, .pause, .resume .close {
