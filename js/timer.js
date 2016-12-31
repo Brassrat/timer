@@ -218,6 +218,8 @@ function startCountDown(id) {
   activeButton = buttons[id];
   if (activeButton) {
     disableButtons(true);
+    var audio = new Audio('sound/' + 'beep' + '.wav');
+    audio.play();
     activeButton.playOnce();
     endtime = Date.now() + (activeButton.duration() * 1000);
     colorDigits(activeButton);
