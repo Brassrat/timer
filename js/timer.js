@@ -45,7 +45,11 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
     playOnce: function() {
       if (!_played) {
         //(new Audio('sound/' + 'clap' + '.wav')).play();
-        this.play(1);
+        if (_sound && !_audio) {
+          _audio = new Audio('sound/' + _sound + '.wav');
+          _audio.load();
+        }
+        //this.play(1);
       }
     },
     color: function () {
