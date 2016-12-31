@@ -1,13 +1,6 @@
 
 .timer {
-    xvisibility: hidden;
-    xtext-align: center;
     background: black;
-    xfont-family: Arial;
-    xfont-weight: bold;
-    xborder: 2px outset;
-    xborder-left: 2px outset darkgray;
-    xborder-top: 2px outset darkgray;
 }
 
 .timer table {
@@ -16,16 +9,10 @@
     font-family: Arial;
     font-weight: bold;
     border: 2px outset;
-    xborder-left: 2px outset darkgray;
-    xborder-top: 2px outset darkgray;
     text-align: center;
 }
 
 .timer tr {
-    text-align: center;
-}
-
-.timer tr td {
     text-align: center;
 }
 
