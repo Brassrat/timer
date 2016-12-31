@@ -67,9 +67,9 @@
     color: yellow;
 }
 
-.start, .pause, .resume .close {
+.start, .pause, .resume, .close {
     width: 80px;
-    font-size: 40pt;
+    font-size: 35pt;
     font-family: Verdana;
     text-align: center;
 }
