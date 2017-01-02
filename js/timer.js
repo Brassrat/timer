@@ -59,6 +59,8 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
         _audio = new Audio('sound/' + _sound + '.wav');
         if (_needLoad) {
           _audio.load();
+          _audio.play();
+          _needLoad = false;
         }
       }
     },
@@ -266,6 +268,7 @@ function processConfig() {
         if (btn.active) {
           //red: Button('red', 'red', 5, 'clap', 1),
           var button = new Button(btn.name, btn.color, btn.timeout, btn.sound, btn.repeat);
+          alert (btn.name + " " + btn.sound);
           button.setElement();
           buttons[btn.id] = button;
         }
