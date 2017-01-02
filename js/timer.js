@@ -111,11 +111,11 @@ function updateDigits(div, elem, value, off) {
 function colorBar(btn, barId) {
   var elem = document.getElementById('bar' + barId);
   if (elem) {
-    //elem.innerHTML='&nbsp';
-    //elem.style.backgroundColor = btn.color();
+    elem.innerHTML='&nbsp';
+    elem.style.backgroundColor = btn.color();
     elem.style.color = btn.color();
-    //VISIBLEelem.style.visibility="visible";
-    //DISPLAYelem.style.display="";
+    elem.style.visibility="visible";
+    elem.style.display="";
   }
 }
 
