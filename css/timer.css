@@ -1,11 +1,13 @@
 
 .timer {
     background: black;
+    backgroundcolor: black;
 }
 
 .timer table {
     visibility: hidden;
     background: black;
+    backgroundcolor: black;
     font-family: Arial;
     font-weight: bold;
     border: 2px outset;
@@ -29,14 +31,17 @@
 }
 
 .bar {
-    margin-top: 15px;
+    xmargin-top: 15px;
+    padding: 2px;
     color: black;
+    backgroundcolor: black;
+    background: black;
     font-size: 40pt;
     font-family: Verdana;
 }
 
 .digits {
-    margin-top: 15px;
+    xmargin-top: 15px;
     color: chartreuse;
     font-size: 40pt;
     font-family: Verdana;

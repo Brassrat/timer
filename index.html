@@ -2,12 +2,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" manifest="cache.manifest">
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar" content="black"/>
     <meta name="viewport" content="user-scalable=no, width=device-width"/>
     <link rel="apple-touch-icon" href="./timer.ico"/>
     <title>Timer</title>
     <link REL="StyleSheet" TYPE="text/css" HREF="css/timer.css">
+    <script type="text/javascript" src="js/config.js"></script>
     <script type="text/javascript" src="js/timer.js"></script>
     <script type="text/javascript">
     function BlockMove(event) {
@@ -27,16 +29,8 @@
 
     <tr id="barRow">
         <td>
-            <span id="bar10" class="bar">-</span>
-            <span id="bar9" class="bar">-</span>
-            <span id="bar8" class="bar">-</span>
-            <span id="bar7" class="bar">-</span>
-            <span id="bar6" class="bar">-</span>
-            <span id="bar5" class="bar">-</span>
-            <span id="bar4" class="bar">-</span>
-            <span id="bar3" class="bar">-</span>
-            <span id="bar2" class="bar">-</span>
-            <span id="bar1" class="bar">-</span>
+            <div id="barDiv">
+            </div>
         </td>
     </tr>
     <tr>
@@ -48,12 +42,8 @@
     </tr>
     <tr>
         <td>
-            <div style="width: 100%;text-align: center; ">
-            <button id="red" class="start" disabled="disabled" onclick="startCountDown('red');">0</button>
-            <button id="orange" class="start" disabled="disabled" onclick="startCountDown('orange');">0</button>
-            <button id="yellow" class="start" disabled="disabled" onclick="startCountDown('yellow');">0</button>
-            <button id="green" class="start" disabled="disabled" onclick="startCountDown('green');">0</button>
-            <button id="blue" class="start" disabled="disabled" onclick="startCountDown('blue');">0</button>
+            <div id="buttonDiv" style="width: 100%;text-align: center; ">
+                <!-- buttons go here -->
             </div>
         </td>
     </tr>

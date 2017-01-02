@@ -7,7 +7,7 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
   var _color = aColor;
   var _duration = aDuration;
   var _sound = aSound;
-  var _played = !is_safari;
+  var _needLoad = is_safari;
   var _audio;
   var _element;
   var _repeat = aRepeat || 1;
@@ -16,16 +16,29 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
       return _id
     },
     element: function () {
-      return _element
-    },
-    setElement: function () {
-      _element = document.getElementById(_id);
+      if (!_element) {
+        _element = document.createElement("button");
+        _element.id = _id;
+        _element.className ="start";
+        _element.onclick = function() { startTimer(_id); }
+        _element.style.backgroundColor = _color;
+        _element.innerHTML = '' + _duration;
+        _element.style.disabled=true;
+      }
       return _element;
     },
-    play: function(count) {
-      if (_sound && !_audio) {
-        _audio = new Audio('sound/' + _sound + '.wav');
+    disable: function(state) {
+      this.element().disabled = state;
+    },
+    setElement: function () {
+      var elem = this.element();
+      var div = document.getElementById('buttonDiv');
+      if (div) {
+        div.appendChild(elem);
       }
+      return elem;
+    },
+    play: function(count) {
       if (_audio) {
         var ct = count || 1;
         if (ct > 1) {
@@ -38,44 +51,29 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
               }
             }, true);
         }
-        _played = true;
         _audio.play();
       }
     },
     playOnce: function() {
-      if (!_played) {
-        //(new Audio('sound/' + 'clap' + '.wav')).play();
-        if (_sound && !_audio) {
+      if (!_audio && _sound) {
+        _audio = new Audio('sound/' + _sound + '.wav');
+        if (_needLoad) {
           _audio = new Audio('sound/' + _sound + '.wav');
           _audio.load();
         }
-        //this.play(1);
       }
     },
     color: function () {
-      return _color
+      return _color;
     },
     duration: function () {
-      return _duration
+      return _duration;
     },
     repeat: function () {
-      return _repeat
+      return _repeat;
     }
   }
 }
-
-const buttons = function(){
-  // TODO load from config file??
-  return {
-    red: Button('red', 'red', 5, 'clap', 1),
-    orange: Button('orange', 'orange', 5, 'chimes', 1),
-    yellow: Button('yellow', 'yellow', 5, 'moo', 1),
-    green: Button('green', 'green', 10, 'beep', 4),
-    blue: Button('blue', 'blue', 10, 'drumroll', 1)
-    //indigo: Button('indigo', 'indigo', 5, 'drop', 5)
-    //violet: Button('violet', 'violet', 5, 'GLASS', 5)
-  }
-}();
 
 function getTimeRemaining(endtime) {
   var t = endtime - Date.now();
@@ -114,18 +112,17 @@ function updateDigits(div, elem, value, off) {
 function colorBar(btn, barId) {
   var elem = document.getElementById('bar' + barId);
   if (elem) {
-    elem.innerHTML='&nbsp';
-    elem.style.backgroundColor = btn.color();
-    elem.style.visibility="visible";
-    elem.style.display="";
+    //elem.innerHTML='&nbsp';
+    //elem.style.backgroundColor = btn.color();
+    elem.style.color = btn.color();
+    //VISIBLEelem.style.visibility="visible";
+    //DISPLAYelem.style.display="";
   }
 }
 
 function colorBars(btn, t) {
   if (btn)
   {
-    document.getElementById('barRow').style.visibility="visible";
-    document.getElementById('barRow').style.display="";
     if ((t.days > 0) || (t.hours > 0) || (t.minutes > 0) || (t.seconds > 0)) {
       for (var ii = 0; ii < 10; ++ii) {
         if ((t.days > 0) || (t.hours > 0) || (t.minutes > 0) || (t.seconds > ii)) {
@@ -137,6 +134,8 @@ function colorBars(btn, t) {
       }
     }
   }
+  document.getElementById('barRow').style.visibility="visible";
+  //DISPLAYdocument.getElementById('barRow').style.display="";
 }
 function unColorBar(barId)
 {
@@ -149,7 +148,7 @@ function unColorBar(barId)
 
 function unColorBars() {
   document.getElementById('barRow').style.visibility="hidden";
-  document.getElementById('barRow').style.display="none";
+  //DISPLAYdocument.getElementById('barRow').style.display="none";
   for (var ii = 0; ii < 10; ++ii) {
     unColorBar(1+ii);
   }
@@ -174,11 +173,12 @@ function updateClock() {
   return t;
 }
 
+var buttons = {}; // empty dictionary
+
 function disableButtons(state) {
   for (var key in buttons) {
     if (buttons.hasOwnProperty(key)) {
-      var elem = buttons[key].element();
-      if (elem) { elem.disabled = state; }
+      buttons[key].disable(state);
     }
   }
 }
@@ -188,6 +188,7 @@ function disableDigit(digits) {
     digits.innerHTML = zero + zero
   }
 }
+
 function disableDigits() {
   disableDigit(dayText);
   disableDigit(hourText);
@@ -200,8 +201,6 @@ function stopTimer(btn) {
   if (btn) { btn.play(btn.repeat()); }
   disableButtons(false);
   disableDigits();
-  document.getElementById('barRow').style.visibility="hidden";
-  document.getElementById('barRow').style.display="none";
 }
 
 function colorDigit(digits, cc) {
@@ -220,7 +219,7 @@ function colorDigits(btn) {
 
 //var startSound = new Audio('sound/' + 'beep' + '.wav');
 
-function startCountDown(id) {
+function startTimer(id) {
   activeButton = buttons[id];
   if (activeButton) {
     disableButtons(true);
@@ -232,24 +231,94 @@ function startCountDown(id) {
   }
 }
 
-window.onload = function () {
-  secondDiv = document.getElementById('secondDiv');
-  secondText = document.getElementById('second');
-  document.getElementById('stuff').innerText = 'HELLO ELLIOT';
-  document.getElementById('timer').style.visibility = 'visible';
-  for (var key in buttons) {
-    if (buttons.hasOwnProperty(key)) {
-      var button = buttons[key];
-      var elem = button.setElement();
-      if (elem) {
-        elem.innerHTML = '' + button.duration();
-        elem.style.backgroundColor = button.color();
+/*
+function loadJSON(callback) {
+     var xobj = new XMLHttpRequest();
+     xobj.overrideMimeType("application/json");
+     xobj.open('GET', 'config.json', true); // Replace 'my_data' with the path to your file
+     xobj.onreadystatechange = function () {
+       if (xobj.readyState == 4 && xobj.status == "200") {
+// Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+         callback(xobj.responseText);
+       }
+      };
+      xobj.send(null);
+}
+
+function init() {
+  loadJSON(function(response) {
+    try {
+// Parse JSON string into object
+      config = JSON.parse(response);
+      processConfig();
+    } catch(ignore)
+    );
+  }
+}
+*/
+
+function processConfig() {
+  if (config) {
+    var bb = config['buttons'];
+    if (bb) {
+      for (var iii = 0; iii < bb.length; ++iii) {
+        var btn = bb[iii];
+        if (btn.active) {
+          //red: Button('red', 'red', 5, 'clap', 1),
+          var button = new Button(btn.name, btn.color, btn.timeout, btn.sound, btn.repeat);
+          button.setElement();
+          buttons[btn.id] = button;
+        }
       }
     }
   }
   disableButtons(false);
+}
+
+var QueryString = function () {
+  // This function is anonymous, is executed immediately and
+  // the return value is assigned to QueryString!
+  var query_string = {};
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i=0;i<vars.length;i++) {
+    var pair = vars[i].split("=");
+    // If first entry with this name
+    if (typeof query_string[pair[0]] === "undefined") {
+      query_string[pair[0]] = decodeURIComponent(pair[1]);
+      // If second entry with this name
+    } else if (typeof query_string[pair[0]] === "string") {
+      var arr = [query_string[pair[0]],decodeURIComponent(pair[1]) ];
+      query_string[pair[0]] = arr;
+      // If third or later entry with this name
+    } else {
+      query_string[pair[0]].push(decodeURIComponent(pair[1]));
+    }
+  }
+  return query_string;
+}();
+
+window.onload = function () {
+  secondDiv = document.getElementById('secondDiv');
+  secondText = document.getElementById('second');
+  var name = QueryString.name || 'ELLIOT';
+  document.getElementById('stuff').innerText = 'HELLO ' + name.replace(/[<>@#$%^&*()={}/?"':;]/g,'').toUpperCase();
+  document.getElementById('timer').style.visibility = 'visible';
+  processConfig();
+  var barDiv = document.getElementById('barDiv');
+  if (barDiv)
+  {
+    for (var ii = 10; ii > 0; --ii)
+    {
+      var span = document.createElement("span");
+      span.id = 'bar' + ii;
+      span.className ="bar";
+      span.innerHTML='&block;';
+      barDiv.appendChild(span);
+    }
+  }
   disableDigits();
   unColorBars();
 };
 
-// vim: sw: 2 ts: 2 :
+// vim: sw=2 ts=2 :
