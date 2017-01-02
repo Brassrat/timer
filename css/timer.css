@@ -2,6 +2,7 @@
 .timer {
     background: black;
     backgroundcolor: black;
+    width: 100%;
 }
 
 .timer table {
