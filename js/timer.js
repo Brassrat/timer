@@ -7,7 +7,7 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
   var _color = aColor;
   var _duration = aDuration;
   var _sound = aSound;
-  var _needLoad = is_safari;
+  var _needLoad = true; //is_safari;
   var _audio;
   var _element;
   var _repeat = aRepeat || 1;
@@ -58,7 +58,6 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
       if (!_audio && _sound) {
         _audio = new Audio('sound/' + _sound + '.wav');
         if (_needLoad) {
-          _audio = new Audio('sound/' + _sound + '.wav');
           _audio.load();
         }
       }
@@ -137,6 +136,7 @@ function colorBars(btn, t) {
   document.getElementById('barRow').style.visibility="visible";
   //DISPLAYdocument.getElementById('barRow').style.display="";
 }
+
 function unColorBar(barId)
 {
   var elem = document.getElementById('bar' + barId);
