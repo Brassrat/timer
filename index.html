@@ -13,8 +13,7 @@
     <script type="text/javascript" src="js/timer.js"></script>
     <script type="text/javascript">
     function BlockMove(event) {
-      // Tell Safari not to move the window.
-      event.preventDefault();
+      event.preventDefault(); // Tell Safari not to move the window.
     }
 
     </script>
@@ -23,22 +22,14 @@
 <table id="timer" class="timer">
     <tr>
         <td>
-            <div id="stuff" class="name"></div>
+            <div id="greeting" class="name"></div>
         </td>
     </tr>
 
     <tr id="barRow">
-        <td id="xbarDiv">
-            <span id="bar10" class="bar">&nbsp;</span>
-            <span id="bar9" class="bar">&nbsp;</span>
-            <span id="bar8" class="bar">&nbsp;</span>
-            <span id="bar7" class="bar">&nbsp;</span>
-            <span id="bar6" class="bar">&nbsp;</span>
-            <span id="bar5" class="bar">&nbsp;</span>
-            <span id="bar4" class="bar">&nbsp;</span>
-            <span id="bar3" class="bar">&nbsp;</span>
-            <span id="bar2" class="bar">&nbsp;</span>
-            <span id="bar1" class="bar">&nbsp;</span>
+        <td>
+            <div id="barDiv">
+            </div>
         </td>
     </tr>
     <tr>
@@ -50,7 +41,7 @@
     </tr>
     <tr>
         <td id="buttonDiv">
-                <!-- buttons go here -->
+            <!-- buttons go here -->
         </td>
     </tr>
 </table>

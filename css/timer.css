@@ -32,7 +32,7 @@
 }
 
 .bar {
-    xmargin-top: 15px;
+    /* margin-top: 15px; */
     padding: 2px;
     color: black;
     backgroundcolor: black;
@@ -42,7 +42,7 @@
 }
 
 .digits {
-    xmargin-top: 15px;
+    /* margin-top: 15px; */
     color: chartreuse;
     font-size: 40pt;
     font-family: Verdana;

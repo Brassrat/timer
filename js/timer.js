@@ -1,16 +1,104 @@
+let timerBackground = 'black';
+let is_safari = navigator.userAgent.indexOf("Safari") > -1;
 
-var timerBackground = 'black';
-var is_safari = navigator.userAgent.indexOf("Safari") > -1;
+const nms = ['01.one.mp3', '02.two.mp3', '03.three.mp3', '04.four.mp3', '05.five.mp3', '06.six.mp3',
+             '07.seven.mp3', '08.eight.mp3', '09.nine.mp3', '10.ten.mp3'];
+const counts = [0,0,0,0,0,0,0,0,0,0];
+
+let buttons = {}; // empty dictionary
+let activeButton;
+let timeinterval;
+let daysDiv;
+let dayText;
+let hourDiv;
+let hourText;
+let minuteDiv;
+let minuteText;
+let secondDiv;
+let secondText;
+let endtime;
+
+let zero = '&nbsp;';
+
+function processConfig() {
+  if (config) {
+    const bb = config['buttons'];
+    if (bb) {
+      for (let iii = 0; iii < bb.length; ++iii) {
+        const btn = bb[iii];
+        if (btn.active) {
+          //red: Button('red', 'red', 5, 'clap', 1),
+          const button = new Button(btn.name, btn.color, btn.timeout, btn.sound, btn.repeat);
+          button.setElement();
+          buttons[btn.id] = button;
+        }
+      }
+    }
+  }
+  disableButtons(false);
+}
+
+
+const QueryString = function () {
+  // This function is anonymous, is executed immediately and
+  // the return value is assigned to QueryString!
+  const query_string = {};
+  const query = window.location.search.substring(1);
+  const vars = query.split("&");
+  for (let i=0;i<vars.length;i++) {
+    let pair = vars[i].split("=");
+    let nm = pair[0];
+    let value = decodeURIComponent(pair[1]);
+    if (typeof query_string[nm] === "undefined") {
+      query_string[nm] = value; // If first entry with this name
+    } else if (typeof query_string[pair[0]] === "string") {
+      // If second entry with this name make it an array
+      query_string[nm] = [query_string[nm], value ];
+    } else {
+      // If third or later entry with this name add to array
+      query_string[nm].push(value);
+    }
+  }
+  return query_string;
+}();
+
+window.onload = function () {
+  secondDiv = document.getElementById('secondDiv');
+  secondText = document.getElementById('second');
+  const name = QueryString.name || config.name;
+  processConfig();
+  document.getElementById('greeting').innerText = 'HELLO ' + name.replace(/[<>@#$%^&*()={}/?"':;]/g,'').toUpperCase();
+  document.getElementById('timer').style.visibility = 'visible';
+  const barDiv = document.getElementById('barDiv');
+  if (barDiv) {
+    for (let ii = 10; ii > 0; --ii) {
+      const span = document.createElement("span");
+      span.id = 'bar' + ii;
+      span.className ="bar";
+      span.innerHTML='&block;';
+      barDiv.appendChild(span);
+    }
+  }
+  disableDigits();
+  unColorBars();
+  const language = QueryString.language || 'english';
+  for (let ii = 0; ii < 10; ++ii) {
+    let aa = new Audio('sound/' + language + "/" + nms[ii]);
+    if (is_safari) { aa.load(); }
+    counts[ii] = aa;
+  }
+
+};
 
 function Button(aId, aColor, aDuration, aSound, aRepeat) {
-  var _id = aId;
-  var _color = aColor;
-  var _duration = aDuration;
-  var _sound = aSound;
-  var _needLoad = true; //is_safari;
-  var _audio;
-  var _element;
-  var _repeat = aRepeat || 1;
+  const _id = aId;
+  const _color = aColor;
+  const _duration = aDuration;
+  const _sound = aSound;
+  let _needLoad = is_safari;
+  let _audio;
+  let _element;
+  let _repeat = aRepeat || 1;
   return {
     id: function () {
       return _id
@@ -20,7 +108,7 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
         _element = document.createElement("button");
         _element.id = _id;
         _element.className ="start";
-        _element.onclick = function() { startTimer(_id); }
+        _element.onclick = function() { startTimer(_id); };
         _element.style.backgroundColor = _color;
         _element.innerHTML = '' + _duration;
         _element.style.disabled=true;
@@ -31,8 +119,8 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
       this.element().disabled = state;
     },
     setElement: function () {
-      var elem = this.element();
-      var div = document.getElementById('buttonDiv');
+      const elem = this.element();
+      let div = document.getElementById('buttonDiv');
       if (div) {
         div.appendChild(elem);
       }
@@ -40,7 +128,7 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
     },
     play: function(count) {
       if (_audio) {
-        var ct = count || 1;
+        let ct = count || 1;
         if (ct > 1) {
           _audio.addEventListener("ended",
             function ended() {
@@ -54,9 +142,12 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
         _audio.play();
       }
     },
+    playCount: function(ct) {
+       if ((ct > 0) && (ct <= counts.length)) (counts[ct-1]).play()
+    },
     playOnce: function() {
       if (!_audio && _sound) {
-        _audio = new Audio('sound/' + _sound + '.wav');
+        _audio = new Audio('sound/notification/' + _sound + '.wav');
         if (_needLoad) {
           _audio.load();
           _needLoad = false;
@@ -76,32 +167,15 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
 }
 
 function getTimeRemaining(endtime) {
-  var t = endtime - Date.now();
-  var seconds = Math.floor(((t + 500) / 1000) % 60);
-  var minutes = Math.floor((t / 1000 / 60) % 60);
-  var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
-  var days = Math.floor(t / (1000 * 60 * 60 * 24));
+  const t = endtime - Date.now();
   return {
     'total': t,
-    'days': days,
-    'hours': hours,
-    'minutes': minutes,
-    'seconds': seconds
+    'days': Math.floor(t / (1000 * 60 * 60 * 24)),
+    'hours': Math.floor((t / (1000 * 60 * 60)) % 24),
+    'minutes': Math.floor((t / 1000 / 60) % 60),
+    'seconds': Math.floor(((t + 500) / 1000) % 60)
   };
 }
-
-var timeinterval;
-var daysDiv;
-var dayText;
-var hourDiv;
-var hourText;
-var minuteDiv;
-var minuteText;
-var secondDiv;
-var secondText;
-var endtime;
-
-var zero = '&nbsp;';
 
 function updateDigits(div, elem, value, off) {
   if (div && elem) {
@@ -110,21 +184,20 @@ function updateDigits(div, elem, value, off) {
 }
 
 function colorBar(btn, barId) {
-  var elem = document.getElementById('bar' + barId);
+  let elem = document.getElementById('bar' + barId);
   if (elem) {
-    elem.innerHTML='&nbsp';
-    elem.style.backgroundColor = btn.color();
+    //elem.innerHTML='&nbsp';
+    //elem.style.backgroundColor = btn.color();
     elem.style.color = btn.color();
-    elem.style.visibility="visible";
-    elem.style.display="";
+    //VISIBLEelem.style.visibility="visible";
+    //DISPLAYelem.style.display="";
   }
 }
 
 function colorBars(btn, t) {
-  if (btn)
-  {
+  if (btn) {
     if ((t.days > 0) || (t.hours > 0) || (t.minutes > 0) || (t.seconds > 0)) {
-      for (var ii = 0; ii < 10; ++ii) {
+      for (let ii = 0; ii < 10; ++ii) {
         if ((t.days > 0) || (t.hours > 0) || (t.minutes > 0) || (t.seconds > ii)) {
           colorBar(btn, 1 + ii);
         }
@@ -138,9 +211,8 @@ function colorBars(btn, t) {
   //DISPLAYdocument.getElementById('barRow').style.display="";
 }
 
-function unColorBar(barId)
-{
-  var elem = document.getElementById('bar' + barId);
+function unColorBar(barId) {
+  const elem = document.getElementById('bar' + barId);
   if (elem) {
     elem.style.color = timerBackground;
     elem.style.backgroundColor = timerBackground;
@@ -150,21 +222,20 @@ function unColorBar(barId)
 function unColorBars() {
   document.getElementById('barRow').style.visibility="hidden";
   //DISPLAYdocument.getElementById('barRow').style.display="none";
-  for (var ii = 0; ii < 10; ++ii) {
+  for (let ii = 0; ii < 10; ++ii) {
     unColorBar(1+ii);
   }
 }
 
-var activeButton;
-
 function updateClock() {
-  var t = getTimeRemaining(endtime);
+  const t = getTimeRemaining(endtime);
   updateDigits(daysDiv, dayText, t.days, '');
   updateDigits(hourDiv, hourText, t.hours, '');
   updateDigits(minuteDiv, minuteText, t.minutes, '');
   updateDigits(secondDiv, secondText, t.seconds, '');
+  activeButton.playCount(t.seconds);
   if ((t.days <= 0) && (t.hours <= 0) && (t.minutes <= 0) && (t.seconds <= 10)) {
-    for (var ii = 10; ii > t.seconds; --ii) {
+    for (let ii = 10; ii > t.seconds; --ii) {
       unColorBar(ii);
     }
   }
@@ -174,10 +245,8 @@ function updateClock() {
   return t;
 }
 
-var buttons = {}; // empty dictionary
-
 function disableButtons(state) {
-  for (var key in buttons) {
+  for (let key in buttons) {
     if (buttons.hasOwnProperty(key)) {
       buttons[key].disable(state);
     }
@@ -211,7 +280,7 @@ function colorDigit(digits, cc) {
 }
 
 function colorDigits(btn) {
-  var cc = btn ? btn.color() : timerBackground;
+  const cc = btn ? btn.color() : timerBackground;
   colorDigit(dayText, cc);
   colorDigit(hourText, cc);
   colorDigit(minuteText, cc);
@@ -258,68 +327,4 @@ function init() {
 }
 */
 
-function processConfig() {
-  if (config) {
-    var bb = config['buttons'];
-    if (bb) {
-      for (var iii = 0; iii < bb.length; ++iii) {
-        var btn = bb[iii];
-        if (btn.active) {
-          //red: Button('red', 'red', 5, 'clap', 1),
-          var button = new Button(btn.name, btn.color, btn.timeout, btn.sound, btn.repeat);
-          button.setElement();
-          buttons[btn.id] = button;
-        }
-      }
-    }
-  }
-  disableButtons(false);
-}
-
-var QueryString = function () {
-  // This function is anonymous, is executed immediately and
-  // the return value is assigned to QueryString!
-  var query_string = {};
-  var query = window.location.search.substring(1);
-  var vars = query.split("&");
-  for (var i=0;i<vars.length;i++) {
-    var pair = vars[i].split("=");
-    // If first entry with this name
-    if (typeof query_string[pair[0]] === "undefined") {
-      query_string[pair[0]] = decodeURIComponent(pair[1]);
-      // If second entry with this name
-    } else if (typeof query_string[pair[0]] === "string") {
-      var arr = [query_string[pair[0]],decodeURIComponent(pair[1]) ];
-      query_string[pair[0]] = arr;
-      // If third or later entry with this name
-    } else {
-      query_string[pair[0]].push(decodeURIComponent(pair[1]));
-    }
-  }
-  return query_string;
-}();
-
-window.onload = function () {
-  secondDiv = document.getElementById('secondDiv');
-  secondText = document.getElementById('second');
-  var name = QueryString.name || 'ELLIOT';
-  document.getElementById('stuff').innerText = 'HELLO ' + name.replace(/[<>@#$%^&*()={}/?"':;]/g,'').toUpperCase();
-  document.getElementById('timer').style.visibility = 'visible';
-  processConfig();
-  var barDiv = document.getElementById('barDiv');
-  if (barDiv)
-  {
-    for (var ii = 10; ii > 0; --ii)
-    {
-      var span = document.createElement("span");
-      span.id = 'bar' + ii;
-      span.className ="bar";
-      span.innerHTML='&block;';
-      barDiv.appendChild(span);
-    }
-  }
-  disableDigits();
-  unColorBars();
-};
-
-// vim: sw=2 ts=2 :
+// vim: sw=2 ts=2 scs :
