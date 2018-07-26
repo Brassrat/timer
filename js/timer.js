@@ -1,5 +1,4 @@
 let timerBackground = 'black';
-let is_safari = navigator.userAgent.indexOf("Safari") > -1;
 
 const nms = ['01.one.mp3',
   '02.two.mp3',
@@ -11,6 +10,7 @@ const nms = ['01.one.mp3',
   '08.eight.mp3',
   '09.nine.mp3',
   '10.ten.mp3'];
+
 const counts = [0,0,0,0,0,0,0,0,0,0];
 
 let buttons = {}; // empty dictionary
@@ -92,10 +92,8 @@ window.onload = function () {
   const language = QueryString.language || 'english';
   for (let ii = 0; ii < 10; ++ii) {
     let aa = new Audio('sound/' + language + "/" + nms[ii]);
-    //if (is_safari) { aa.load(); }
+    if (TimerBrowser.iOS()) { aa.load(); }
     counts[ii] = aa;
-    aa.load();
-    counts[ii] = counts[0];
   }
 
 };
@@ -105,7 +103,7 @@ function Button(aId, aColor, aDuration, aSound, aRepeat) {
   const _color = aColor;
   const _duration = aDuration;
   const _sound = aSound;
-  let _needLoad = is_safari;
+  let _needLoad = TimerBrowser.iOS();
   let _audio;
   let _element;
   let _repeat = aRepeat || 1;
