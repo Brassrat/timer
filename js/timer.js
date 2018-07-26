@@ -1,8 +1,16 @@
 let timerBackground = 'black';
 let is_safari = navigator.userAgent.indexOf("Safari") > -1;
 
-const nms = ['01.one.mp3', '02.two.mp3', '03.three.mp3', '04.four.mp3', '05.five.mp3', '06.six.mp3',
-             '07.seven.mp3', '08.eight.mp3', '09.nine.mp3', '10.ten.mp3'];
+const nms = ['01.one.mp3',
+  '02.two.mp3',
+  '03.three.mp3',
+  '04.four.mp3',
+  '05.five.mp3',
+  '06.six.mp3',
+  '07.seven.mp3',
+  '08.eight.mp3',
+  '09.nine.mp3',
+  '10.ten.mp3'];
 const counts = [0,0,0,0,0,0,0,0,0,0];
 
 let buttons = {}; // empty dictionary
@@ -83,7 +91,8 @@ window.onload = function () {
   unColorBars();
   const language = QueryString.language || 'english';
   for (let ii = 0; ii < 10; ++ii) {
-    let aa = new Audio('sound/' + language + "/" + nms[ii]);
+    let ct = 5; // ii
+    let aa = new Audio('sound/' + language + "/" + nms[ct]);
     if (is_safari) { aa.load(); }
     counts[ii] = aa;
   }
@@ -286,8 +295,6 @@ function colorDigits(btn) {
   colorDigit(minuteText, cc);
   colorDigit(secondText, cc);
 }
-
-//var startSound = new Audio('sound/' + 'beep' + '.wav');
 
 function startTimer(id) {
   activeButton = buttons[id];
