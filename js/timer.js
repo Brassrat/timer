@@ -91,10 +91,11 @@ window.onload = function () {
   unColorBars();
   const language = QueryString.language || 'english';
   for (let ii = 0; ii < 10; ++ii) {
-    let ct = 5; // ii
-    let aa = new Audio('sound/' + language + "/" + nms[ct]);
-    if (is_safari) { aa.load(); }
+    let aa = new Audio('sound/' + language + "/" + nms[ii]);
+    //if (is_safari) { aa.load(); }
     counts[ii] = aa;
+    aa.load();
+    counts[ii] = counts[0];
   }
 
 };
