@@ -92,7 +92,7 @@ window.onload = function () {
   const language = QueryString.language || 'english';
   for (let ii = 0; ii < 10; ++ii) {
     let aa = new Audio('sound/' + language + "/" + nms[ii]);
-    if (TimerBrowser.iOS()) { aa.load(); }
+    if (true || TimerBrowser.iOS()) { aa.load(); }
     counts[ii] = aa;
   }
 
