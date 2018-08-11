@@ -153,15 +153,23 @@ const timer = (function () {
     let count = aCount;
     let file = '';
     let audio = null;
+    let needLoad = true || TimerBrowser.iOS();
 
     function initAudio() {
-      let nm = nms[count];
-      if (nm) {
-        file = `sound/${language}/${nm}`;
-        audio = new Audio(file);
-        audio.style.display = "none";
-        if (true || TimerBrowser.iOS()) { audio.load(); }
+      if (!audio) {
+        let nm = nms[count];
+        if (nm) {
+          file = `sound/${language}/${nm}`;
+          audio = new Audio(file);
+          audio.style.display = "none";
+          needLoad = TimerBrowser.iOS();
+        }
       }
+      if (audio && needLoad) {
+        audio.load();
+        needLoad = false;
+      }
+      return (audio != null);
     }
 
     //initAudio();
@@ -174,8 +182,7 @@ const timer = (function () {
     }
 
     function play() {
-      if (!audio) { initAudio(); }
-      if (audio) {
+      if (initAudio()) {
         const ee = function () {
           playingCount = -1;
           audio.removeEventListener("ended", ee, false);
@@ -187,7 +194,9 @@ const timer = (function () {
       }
     }
 
-    return {play};
+    function load() { return initAudio(); }
+
+    return {load, play};
   }
 
   function Button(cfg) {
@@ -399,6 +408,8 @@ const timer = (function () {
     activeButton = buttons[id];
     if (activeButton) {
       disableButtons(true);
+      counts.forEach(cc => { cc.load(); });
+
       activeButton.playStart();
       endtime = Date.now() + (activeButton.duration() * 1000);
       colorDigits(activeButton);
