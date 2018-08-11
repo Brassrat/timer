@@ -13,9 +13,12 @@ const timer = (function () {
     '09.nine.mp3',
     '10.ten.mp3'];
 
+  const rainbow = ['red', 'orange', 'yellow', 'blue', 'green', 'indigo', 'violet'];
+
   const counts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   let timerBackground = 'black';
+  let timerForeground = rainbow[randomnumber(rainbow.length)];
   let buttons = {}; // empty dictionary
   let activeButton;
   let timeinterval;
@@ -29,8 +32,9 @@ const timer = (function () {
 
   function $E(id) { return document.getElementById(id) }
 
-  function randomnumber(max) { return Math.min(max, Math.floor((Math.random() * (max+1)) )) }
+  function randomnumber(max) { return Math.min(max, Math.floor((Math.random() * (max + 1)))) }
 
+  let greetingDiv = null;
   let name = 'no name';
   let language = 'english';
 
@@ -60,34 +64,20 @@ const timer = (function () {
       return query_string;
     }();
 
+    greetingDiv = $E('greeting');
     secondText = $E('second');
     name = QueryString.name || config.name;
     language = QueryString.language || 'english';
 
-    const rainbow = ['red', 'orange', 'yellow', 'blue', 'green', 'indigo', 'violet'];
-
     if (config) {
       timerBackground = config.background || 'black';
-      timerForeground = rainbow[randomnumber(rainbow.length)];
-      const bb = config.buttons;
-      if (bb) {
-        for (let iii = 0; iii < bb.length; ++iii) {
-          const btn = bb[iii];
-          if (btn.active) {
-            //red: Button('red', 'red', 5, 'clap', 1),
-            const button = new Button(btn.name, btn.color, btn.timeout, btn.sound, btn.repeat);
-            button.setElement();
-            buttons[btn.id] = button;
-          }
-        }
-      }
+      config.buttons.forEach(btn => { buttons[btn.id] = new Button(btn); });
     }
 
     for (let ii = 0; ii < nms.length; ++ii) {
       counts[ii] = new Count(ii);
     }
 
-    let greetingDiv = $E('greeting');
     if (greetingDiv) {
       greetingDiv.style.color = timerForeground;
       greeting.innerText = 'HELLO ' + name.replace(/[<>@#$%^&*()={}/?"':;]/g, '').toUpperCase();
@@ -160,31 +150,21 @@ const timer = (function () {
   // }
 
   function Count(aCount) {
-    let count = 0;
+    let count = aCount;
     let file = '';
     let audio = null;
 
-    function initAudio(cc) {
-      let nm = nms[cc];
-      count = cc;
+    function initAudio() {
+      let nm = nms[count];
       if (nm) {
         file = `sound/${language}/${nm}`;
         audio = new Audio(file);
         audio.style.display = "none";
         if (true || TimerBrowser.iOS()) { audio.load(); }
       }
-      else {
-        file = '';
-        audio = noAudio;
-      }
     }
 
-    initAudio(aCount);
-
-    function count_ended() {
-      playingCount = -1;
-      audio.removeEventListener("ended", count_ended, false);
-    }
+    //initAudio();
 
     function stop() {
       if (audio && (playingCount === _count)) {
@@ -193,33 +173,39 @@ const timer = (function () {
       }
     }
 
-    return {
-      file: function () { return file; },
-      play: function () {
-        if (audio) {
-          playingCount = count;
-          audio.addEventListener("ended", count_ended, true);
-          audio.play();
-        }
+    function play() {
+      if (!audio) { initAudio(); }
+      if (audio) {
+        const ee = function () {
+          playingCount = -1;
+          audio.removeEventListener("ended", ee, false);
+        };
+
+        playingCount = count;
+        audio.addEventListener("ended", ee, true);
+        audio.play();
       }
     }
+
+    return {play};
   }
 
-  function Button(aId, aColor, aDuration, aSound, aRepeat) {
-    const _id = aId;
-    const _color = aColor;
-    const _duration = aDuration;
-    const _sound = aSound;
-    const _repeat = aRepeat || 1;
+  function Button(cfg) {
+    const _id = cfg.id;
+    const active = cfg.active || false;
+    const _color = cfg.color || 'yellow';
+    const _timeout = cfg.timeout || 1;
+    const _sound = cfg.sound;
+    const _repeat = cfg.repeat || 1;
     let _needLoad = true || TimerBrowser.iOS();
-    let _audio;
-    let _element;
+    let _audio = null;
+    let _element = null;
 
     function id() { return _id }
 
     function color() { return _color; }
 
-    function duration() { return _duration; }
+    function duration() { return _timeout; }
 
     function element() {
       if (!_element) {
@@ -228,26 +214,28 @@ const timer = (function () {
         _element.className = "start";
         _element.onclick = function () { startTimer(_id); };
         _element.style.backgroundColor = _color;
-        _element.innerHTML = '' + _duration;
+        _element.innerHTML = '' + _timeout;
         _element.style.disabled = true;
+        if (active) {
+          let div = $E('buttonDiv');
+          if (div) { div.appendChild(_element); }
+        }
       }
       return _element;
     }
 
-    function repeat() { return _repeat; }
+    function disable(state) { element().disabled = state; }
 
-    function disable(state) { this.element().disabled = state; }
-
-    function setElement() {
-      const elem = element();
-      let div = $E('buttonDiv');
-      if (div) { div.appendChild(elem); }
-      return elem;
-    }
-
-    function play(count) {
+    function play() {
+      if (!_audio && _sound) {
+        _audio = new Audio(`sound/notification/${_sound}.wav`);
+      }
       if (_audio) {
-        let ct = count || 1;
+        if (_needLoad) {
+          _audio.load();
+          _needLoad = false;
+        }
+        let ct = _repeat || 1;
         if (ct > 1) {
           _audio.addEventListener("ended",
                                   function ended() {
@@ -261,7 +249,7 @@ const timer = (function () {
       }
     }
 
-    function playOnce() {
+    function playStart() {
       if (!_audio && _sound) {
         _audio = new Audio('sound/notification/' + _sound + '.wav');
         if (_needLoad) {
@@ -273,20 +261,11 @@ const timer = (function () {
 
     return {
       id,
-      element,
       disable,
-      setElement,
       play,
-      playOnce,
+      playStart,
       color,
       duration,
-      repeat
-    }
-  }
-
-  function playCount(ct) {
-    if ((ct >= 0) && (ct < counts.length)) {
-      (counts[ct]).play()
     }
   }
 
@@ -318,6 +297,10 @@ const timer = (function () {
 
   function colorBars(btn, t) {
     if (btn) {
+      if (greetingDiv) {
+        timerForeground = rainbow[randomnumber(rainbow.length)];
+        greetingDiv.style.color = timerForeground;
+      }
       if ((t.days > 0) || (t.hours > 0) || (t.minutes > 0) || (t.seconds > 0)) {
         for (let ii = 0; ii < 10; ++ii) {
           if ((t.days > 0) || (t.hours > 0) || (t.minutes > 0) || (t.seconds > ii)) {
@@ -356,12 +339,17 @@ const timer = (function () {
     updateDigits(minuteText, t.minutes, '');
     let secs = t.seconds;
     updateDigits(secondText, secs, '');
-    playCount(secs);
-    if ((t.days <= 0) && (t.hours <= 0) && (t.minutes <= 0) && (secs < counts.length)) {
+    if ((t.days <= 0) && (t.hours <= 0) && (t.minutes <= 0) && (secs >= 0) && (secs < counts.length)) {
+      counts[secs].play();
       for (let ii = counts.length - 1; ii > secs; --ii) {
         unColorBar(ii);
       }
     }
+    if (greetingDiv) {
+      timerForeground = rainbow[randomnumber(rainbow.length)];
+      greetingDiv.style.color = timerForeground;
+    }
+
     if (t.total <= 0) {
       stopTimer(activeButton);
     }
@@ -391,7 +379,7 @@ const timer = (function () {
 
   function stopTimer(btn) {
     clearInterval(timeinterval);
-    if (btn) { btn.play(btn.repeat()); }
+    if (btn) { btn.play(); }
     disableButtons(false);
     disableDigits();
   }
@@ -404,17 +392,14 @@ const timer = (function () {
 
   function colorDigits(btn) {
     const cc = btn ? btn.color() : timerBackground;
-    colorDigit(dayText, cc);
-    colorDigit(hourText, cc);
-    colorDigit(minuteText, cc);
-    colorDigit(secondText, cc);
+    [dayText, hourText, minuteText, secondText].forEach(tt => colorDigit(tt, cc));
   }
 
   function startTimer(id) {
     activeButton = buttons[id];
     if (activeButton) {
       disableButtons(true);
-      activeButton.playOnce();
+      activeButton.playStart();
       endtime = Date.now() + (activeButton.duration() * 1000);
       colorDigits(activeButton);
       colorBars(activeButton, updateClock());
