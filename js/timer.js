@@ -390,7 +390,7 @@ const timer = (function () {
       function colorDigits(btn) {
         const cc = btn ? btn.color() : timerBackground;
         [dayDiv, hourDiv, minuteDiv, secondDiv].forEach(tt => color(tt, cc));
-        //[dayText, hourText, minuteText, secondText].forEach(tt => color(tt, cc));
+        [dayText, hourText, minuteText, secondText].forEach(tt => color(tt, cc));
       }
 
       function startTimer(id) {
