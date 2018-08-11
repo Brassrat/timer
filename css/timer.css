@@ -1,14 +1,12 @@
 
 .timer {
     background: black;
-    backgroundcolor: black;
     width: 100%;
 }
 
 .timer table {
     visibility: hidden;
     background: black;
-    backgroundcolor: black;
     font-family: Arial;
     font-weight: bold;
     border: 2px outset;
@@ -35,7 +33,6 @@
     /* margin-top: 15px; */
     padding: 2px;
     color: black;
-    backgroundcolor: black;
     background: black;
     font-size: 40pt;
     font-family: Verdana;
