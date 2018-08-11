@@ -17,6 +17,10 @@
     text-align: center;
 }
 
+.timer tr td {
+    text-align: center;
+}
+
 .name {
     margin-top: 15px;
     color: yellow;
