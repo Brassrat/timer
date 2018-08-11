@@ -365,11 +365,15 @@ const timer = (function () {
       }
 
       function disableDigit(digit) {
-        if (digit) { updateDigit(digit, ''); }
+        if (digit) {
+          updateDigit(digit, '');
+          color(digit, timerBackground);
+        }
       }
 
       function disableDigits() {
         [dayText, hourText, minuteText, secondText].forEach(tt => disableDigit(tt));
+        [dayDiv, hourDiv, minuteDiv, secondDiv].forEach(tt => color(tt, timerBackground));
       }
 
       function stopTimer(btn) {
